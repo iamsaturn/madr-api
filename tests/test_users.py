@@ -58,7 +58,7 @@ def test_patch_user_username(client, test_user, headers):
     data = response.json()
 
     assert response.status_code == HTTPStatus.OK
-    assert data["username"] == "NewMaria"
+    assert data["username"] == "newmaria"
     assert data["email"] == test_user.email
 
 

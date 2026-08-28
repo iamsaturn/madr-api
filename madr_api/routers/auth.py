@@ -8,7 +8,7 @@ from sqlalchemy import select
 from madr_api.database import SessionDep
 from madr_api.models import User
 from madr_api.schemas import Token_Schema
-from madr_api.security import create_access_token, verify_password
+from madr_api.security import CurrentUserDep, create_access_token, verify_password
 
 router = APIRouter(prefix="/auth", tags=["Authorization"])
 
@@ -35,3 +35,14 @@ async def post_token(session: SessionDep, form_data: O2Auth):
 
     token = create_access_token({"sub": user_db.email})
     return {"access_token": token, "token_type": "bearer"}
+
+@router.post('/refresh-token', response_model=Token_Schema)
+async def refresh_token(current_user: CurrentUserDep):
+    new_token = create_access_token(
+        {'sub': current_user.email}
+    )
+
+    return {
+        'access_token': new_token,
+        'token_type': 'bearer'
+    }
