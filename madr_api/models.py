@@ -10,7 +10,7 @@ from madr_api.database import table_registry
 class Novelist:
     __tablename__ = "novelists"
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True)
     books: Mapped[list[Book]] = relationship(
         back_populates="novelist", default_factory=list
     )
@@ -20,7 +20,7 @@ class Novelist:
 class Book:
     __tablename__ = "books"
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(unique=True)
     year: Mapped[int]
     novelist_id: Mapped[int] = mapped_column(ForeignKey("novelists.id"), init=False)
     novelist: Mapped[Novelist] = relationship(back_populates="books")

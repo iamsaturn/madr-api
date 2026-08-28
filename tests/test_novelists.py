@@ -120,3 +120,12 @@ def test_offset_novelist(client, test_novelist, test_other_novelist):
     assert len(data) == 1
     assert data[0]["id"] == test_other_novelist.id
     assert response.status_code == HTTPStatus.OK
+
+
+def test_delete_novelist_with_books(client, test_novelist, test_book, headers):
+    response = client.delete(f"/novelists/{test_novelist.id}", headers=headers)
+
+    data = response.json()
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert data["detail"] == "Novelist has registered books"

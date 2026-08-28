@@ -50,31 +50,22 @@ def test_token_without_sub(client):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json()["detail"] == "Could not validate credentials"
 
+
 def test_refresh_token(client, headers):
-    response = client.post(
-        '/auth/refresh-token',
-        headers=headers
-    )
+    response = client.post("/auth/refresh-token", headers=headers)
     data = response.json()
     assert response.status_code == HTTPStatus.OK
-    assert 'access_token' in data
-    assert data['token_type'] == 'bearer'
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
 
-    new_headers = {
-        'Authorization': f"Bearer {data['access_token']}"
-    }
-    me_response = client.get(
-        '/users/me',
-        headers=new_headers
-    )
+    new_headers = {"Authorization": f"Bearer {data['access_token']}"}
+    me_response = client.get("/users/me", headers=new_headers)
 
     assert me_response.status_code == HTTPStatus.OK
 
+
 def test_refresh_token_with_invalid_token(client):
     response = client.post(
-        '/auth/refresh-token',
-        headers={
-            'Authorization': 'Bearer invalid-token'
-        }
+        "/auth/refresh-token", headers={"Authorization": "Bearer invalid-token"}
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED

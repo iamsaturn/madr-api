@@ -72,7 +72,7 @@ class UserCreate(BaseModel):
     password: str
     email: EmailStr
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def sanitize_username(cls, value: str):
         return sanitize_text(value)
@@ -110,7 +110,7 @@ class UserUpdate(BaseModel):
     email: EmailStr | None = None
     password: str | None = None
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def sanitize_username(cls, value: str):
         if value is None:

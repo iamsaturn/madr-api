@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 
 from madr_api.database import SessionDep
-from madr_api.models import Novelist
+from madr_api.models import Book, Novelist
 from madr_api.schemas import (
     NovelistCreate,
     NovelistFilter,
@@ -102,6 +102,14 @@ async def delete_novelist(
     if novelist_db is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail="Novelist not found"
+        )
+    book_query = select(Book).where(Book.novelist_id == novelist_id)
+
+    existing_book = await session.scalar(book_query)
+
+    if existing_book is not None:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT, detail="Novelist has registered books"
         )
 
     await session.delete(novelist_db)
