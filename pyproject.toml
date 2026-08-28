@@ -33,6 +33,6 @@ dev = [
 
 [tool.poe.tasks]
 run = "fastapi dev madr_api/app.py"
-test = "pytest --cov=madr_api -vv"
+test = "python -m pytest --cov=madr_api --cov-report=term-missing --cov-report=html"
 lint = "ruff check ."
 format = "ruff format ."
