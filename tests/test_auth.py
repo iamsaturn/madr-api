@@ -26,7 +26,7 @@ def test_with_wrong_password(client,test_user):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json()['detail'] == 'Invalid credentials'
 
-def test_login_with_nonexistent_email(client,test_user):
+def test_login_with_nonexistent_email(client):
     response = client.post(
         '/auth/token',
         data={
@@ -37,7 +37,7 @@ def test_login_with_nonexistent_email(client,test_user):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json()['detail'] == 'Invalid credentials'
 
-def test_protected_route_with_invalid_token(client,test_user):
+def test_protected_route_with_invalid_token(client):
     response = client.get(
         '/users/me',
         headers = {

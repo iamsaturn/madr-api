@@ -1,13 +1,19 @@
 from http import HTTPStatus
 
-import pytest
-
-from tests.schemas import TestUser
 def test_create_user(client, user_data):
     response = client.post(
         '/users',
         json= user_data.model_dump(mode='json'))
+    data = response.json()
     assert response.status_code == HTTPStatus.OK
+    assert data['email'] == user_data.email
+    assert data['username'] == user_data.username
+    assert "id" in data
+    assert data['id'] is not None
+    assert "created_at" in data
+    assert data['created_at'] is not None
+    assert "password" not in data
+    assert "hashed_password" not in data
 
 def test_duplicated_username(client, user_data):
     client.post(
@@ -18,8 +24,9 @@ def test_duplicated_username(client, user_data):
                          'email': 'different@email.com',
                          'password': user_data.password}
     )
+    data = response.json()
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json()['detail'] == 'Username already exists'
+    assert data['detail'] == 'Username already exists'
 
 def test_duplicated_email(client, user_data):
     client.post(
@@ -30,13 +37,15 @@ def test_duplicated_email(client, user_data):
                          'email': user_data.email,
                          'password': user_data.password}
     )
+    data = response.json()
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json()['detail'] == 'Email already exists'
+    assert data['detail'] == 'Email already exists'
 
 def test_users_me_unauthorized(client):
     response = client.get('/users/me')
+    data = response.json()
     assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json()['detail'] == 'Not authenticated'
+    assert data['detail'] == 'Not authenticated'
     
 
 
