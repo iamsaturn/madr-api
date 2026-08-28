@@ -25,7 +25,7 @@ class BookPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class BookUpdate(BaseModel):
-    name: str | None = None
+    title: str | None = None
     year: int | None = None
     novelist_id: int | None = None
  
@@ -40,3 +40,7 @@ class UserPublic(BaseModel):
     email: EmailStr
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class Token_Schema(BaseModel):
+    access_token: str
+    token_type: str

@@ -1,21 +1,22 @@
 from http import HTTPStatus
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from madr_api.database import get_session
+from madr_api.database import SessionDep
 from madr_api.models import Book, Novelist
 from madr_api.schemas import BookCreate, BookPublic, BookUpdate
+from madr_api.security import CurrentUserDep
 
 router = APIRouter(prefix='/books',tags=['Books'])
 
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 @router.post('/', response_model=BookPublic)
-async def post_book (book: BookCreate, session:SessionDep):
+async def post_book (
+    book: BookCreate,
+    session:SessionDep,
+    current_user: CurrentUserDep):
     query = select(Novelist).where(Novelist.id == book.novelist_id)
     novelist_db = await session.scalar(query)
     if novelist_db is None:
@@ -55,7 +56,8 @@ async def get_book_by_id(book_id: int, session: SessionDep):
 async def patch_book(
     book_id: int,
     book_patch:BookUpdate,
-    session:SessionDep):
+    session:SessionDep,
+    current_user: CurrentUserDep):
     query = select(Book).options(
         selectinload(Book.novelist)
     ).where(Book.id == book_id)
@@ -83,7 +85,8 @@ async def patch_book(
 @router.delete('/{book_id}',status_code=HTTPStatus.NO_CONTENT)
 async def delete_book(
     book_id: int,
-    session:SessionDep):
+    session:SessionDep,
+    current_user: CurrentUserDep):
     query = select(Book).where(Book.id == book_id)
     book_db = await session.scalar(query)
     if book_db is None:

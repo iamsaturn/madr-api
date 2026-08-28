@@ -1,4 +1,7 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from typing import Annotated
+
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import registry
 
 from madr_api.settings import settings
@@ -15,3 +18,6 @@ async def get_session():
 
 
 table_registry = registry()
+
+
+SessionDep = Annotated[AsyncSession,Depends(get_session)]
