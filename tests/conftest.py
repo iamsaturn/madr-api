@@ -15,9 +15,8 @@ from madr_api.schemas import (
 )
 from tests.schemas import CreatedUser
 
-container = PostgresContainer(
-    image='postgres:17', driver='psycopg'
-)
+container = PostgresContainer(image="postgres:17", driver="psycopg")
+
 
 @pytest_asyncio.fixture(scope="session")
 async def engine():
@@ -25,6 +24,7 @@ async def engine():
         engine = create_async_engine(postgres.get_connection_url())
         yield engine
         await engine.dispose()
+
 
 @pytest_asyncio.fixture
 async def create_tables(engine):
@@ -34,11 +34,10 @@ async def create_tables(engine):
     async with engine.begin() as conn:
         await conn.run_sync(table_registry.metadata.drop_all)
 
+
 @pytest_asyncio.fixture
 async def session(engine, create_tables):
-    Session = async_sessionmaker(
-        engine,
-        expire_on_commit=False)
+    Session = async_sessionmaker(engine, expire_on_commit=False)
     async with Session() as session:
         yield session
 
@@ -47,6 +46,7 @@ async def session(engine, create_tables):
 async def client(session):
     async def override_get_session():
         yield session
+
     app.dependency_overrides[get_session] = override_get_session
     yield TestClient(app)
     app.dependency_overrides.clear()
@@ -54,89 +54,74 @@ async def client(session):
 
 @pytest.fixture
 def user_data():
-    return UserCreate(
-                username= 'Maria',
-                email= 'maria@gmail.com',
-                password='mariasecret'
-            )
+    return UserCreate(username="Maria", email="maria@gmail.com", password="mariasecret")
+
 
 @pytest.fixture
 def other_user_data():
-    return UserCreate(
-            username= 'Lua',
-            email= 'lua@gmail.com',
-            password='luasecret'
-        )
+    return UserCreate(username="Lua", email="lua@gmail.com", password="luasecret")
+
 
 @pytest.fixture
 def novelist_data():
-    return NovelistCreate(
-        name= 'John GPT'
-    )
+    return NovelistCreate(name="John GPT")
+
+
 @pytest.fixture
 def other_novelist_data():
-    return NovelistCreate(
-        name= 'Chad GPT'
-    )
+    return NovelistCreate(name="Chad GPT")
+
 
 @pytest.fixture
-def test_user(client,user_data):
-    response = client.post(
-        '/users', json=user_data.model_dump(mode='json')
-    )
+def test_user(client, user_data):
+    response = client.post("/users", json=user_data.model_dump(mode="json"))
     data = response.json()
-    data['clear_password'] = user_data.password
+    data["clear_password"] = user_data.password
     return CreatedUser.model_validate(data)
 
+
 @pytest.fixture
-def token(client,test_user):
-    response = client.post('/auth/token',
-                data={
-                    'username': test_user.email,
-                    'password': test_user.clear_password
-                })
-    token = response.json()['access_token']
+def token(client, test_user):
+    response = client.post(
+        "/auth/token",
+        data={"username": test_user.email, "password": test_user.clear_password},
+    )
+    token = response.json()["access_token"]
     return token
+
 
 @pytest.fixture
 def headers(token):
-    return {'Authorization': f'Bearer {token}'}
+    return {"Authorization": f"Bearer {token}"}
+
 
 @pytest.fixture
-def test_novelist(client,novelist_data, headers):
+def test_novelist(client, novelist_data, headers):
     response = client.post(
-        '/novelists',
-        headers=headers,
-        json= novelist_data.model_dump(mode='json')
+        "/novelists", headers=headers, json=novelist_data.model_dump(mode="json")
     )
     data = response.json()
     return NovelistPublic.model_validate(data)
 
+
 @pytest.fixture
-def test_other_novelist(client,other_novelist_data, headers):
+def test_other_novelist(client, other_novelist_data, headers):
     response = client.post(
-        '/novelists',
-        headers=headers,
-        json= other_novelist_data.model_dump(mode='json')
+        "/novelists", headers=headers, json=other_novelist_data.model_dump(mode="json")
     )
     data = response.json()
     return NovelistPublic.model_validate(data)
+
 
 @pytest.fixture
 def book_data(test_novelist):
-    return BookCreate(
-        title = 'Hora da estrela',
-        year=1997,
-        novelist_id=test_novelist.id
-    )
+    return BookCreate(title="Hora da estrela", year=1997, novelist_id=test_novelist.id)
+
 
 @pytest.fixture
-def test_book(book_data,client, headers):
+def test_book(book_data, client, headers):
     response = client.post(
-        '/books/',
-        headers=headers,
-        json = book_data.model_dump(mode='json')
+        "/books/", headers=headers, json=book_data.model_dump(mode="json")
     )
     data = response.json()
     return BookPublic.model_validate(data)
-
