@@ -3,7 +3,6 @@ from http import HTTPStatus
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
-
 from madr_api.database import SessionDep
 from madr_api.models import User
 from madr_api.schemas import UserCreate, UserPublic

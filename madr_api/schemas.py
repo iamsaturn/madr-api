@@ -1,8 +1,20 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
+
+
+def sanitize_text(value:str) -> str:
+    value = value.lower().strip().split()
+    value = ' '.join(value)
+    return value
+
 
 class NovelistCreate(BaseModel):
     name: str
+    @field_validator('name')
+    @classmethod
+    def sanitize_name(cls, value: str):
+        return sanitize_text(value)
 
 class NovelistPublic(BaseModel):
     name: str
@@ -11,11 +23,22 @@ class NovelistPublic(BaseModel):
 
 class NovelistUpdate(BaseModel):
     name: str | None = None
+    @field_validator('name')
+    @classmethod
+    def sanitize_name(cls, value:str):
+        if value is None:
+            return value
+        return sanitize_text(value)
+
 
 class BookCreate(BaseModel):
     title: str
     year: int
     novelist_id: int
+    @field_validator('title')
+    @classmethod
+    def sanitize_title(cls, value:str):
+        return sanitize_text(value)
 
 class BookPublic(BaseModel):
     id: int
@@ -28,6 +51,12 @@ class BookUpdate(BaseModel):
     title: str | None = None
     year: int | None = None
     novelist_id: int | None = None
+    @field_validator('title')
+    @classmethod
+    def sanitize_title(cls, value:str):
+        if value is None:
+            return value
+        return sanitize_text(value)
  
 class UserCreate(BaseModel):
     username: str

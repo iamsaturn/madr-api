@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+
 def test_create_user(client, user_data):
     response = client.post(
         '/users',

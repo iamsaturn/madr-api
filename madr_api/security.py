@@ -1,13 +1,14 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from typing import Annotated
 
+import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from pwdlib import PasswordHash
-import jwt
 from jwt.exceptions import InvalidTokenError
+from pwdlib import PasswordHash
 from sqlalchemy import select
+
 from madr_api.database import SessionDep
 from madr_api.models import User
 from madr_api.settings import settings
@@ -35,7 +36,7 @@ def verify_password(
 
 def create_access_token(payload: dict) -> str:
     data = payload.copy()
-    expiration = datetime.now(timezone.utc) + timedelta(
+    expiration = datetime.now(UTC) + timedelta(
         minutes= settings.ACCESS_TOKEN_EXPIRES)
     data.update({"exp": expiration})
     token = jwt.encode(data, settings.SECRET_KEY, settings.ALGORITHM )

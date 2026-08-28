@@ -36,7 +36,7 @@ def test_get_novelist_by_id(client, test_novelist):
 
 def test_get_nonexistent_novelist(client):
     response = client.get(
-            f'/novelists/999'
+            '/novelists/999'
         )
     data = response.json()
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -52,7 +52,7 @@ def test_patch_novelist(client, test_novelist, headers):
     )
     data = response.json()
     assert response.status_code == HTTPStatus.OK
-    assert data['name'] == 'NewName'
+    assert data['name'] == 'newname'
     assert data['id'] == test_novelist.id
 
 def test_patch_nonexistent_novelist(client, headers):
@@ -83,7 +83,7 @@ def test_delete_novelist(client, test_novelist, headers):
 
 def test_delete_nonexistent_novelist(client,headers):
     response = client.delete(
-        f'/novelists/999',
+        '/novelists/999',
         headers=headers
     )
     data = response.json()

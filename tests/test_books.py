@@ -76,7 +76,7 @@ def test_patch_book(client,test_book,headers, test_other_novelist):
     )
     data = response.json()
     assert response.status_code == HTTPStatus.OK
-    assert data['title'] == 'Newtitle'
+    assert data['title'] == 'newtitle'
     assert data['year'] == 2010
     assert data['novelist'] == test_other_novelist.model_dump(mode='json')
     assert isinstance(data,dict)

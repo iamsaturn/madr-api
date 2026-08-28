@@ -1,11 +1,18 @@
-import pytest_asyncio
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from testcontainers.postgres import PostgresContainer
+
 from madr_api.app import app
 from madr_api.database import get_session, table_registry
-from madr_api.schemas import BookCreate, BookPublic, NovelistCreate, NovelistPublic, UserCreate
+from madr_api.schemas import (
+    BookCreate,
+    BookPublic,
+    NovelistCreate,
+    NovelistPublic,
+    UserCreate,
+)
 from tests.schemas import CreatedUser
 
 container = PostgresContainer(

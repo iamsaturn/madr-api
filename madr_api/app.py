@@ -1,7 +1,9 @@
-from fastapi import FastAPI
 import asyncio
 import sys
-from madr_api.routers import books, novelists, users, auth
+
+from fastapi import FastAPI
+
+from madr_api.routers import auth, books, novelists, users
 
 app = FastAPI()
 app.include_router(novelists.router)

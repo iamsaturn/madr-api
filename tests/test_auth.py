@@ -3,7 +3,6 @@ from http import HTTPStatus
 from madr_api.security import create_access_token
 
 
-
 def test_me_with_valid_token(client,test_user, headers):
     response = client.get(
         '/users/me',
