@@ -1,4 +1,4 @@
-# MADR API
+# MADR API - Modern Archive for Digital Romance
 
 A production-ready REST API for managing romance books and novelists, built with FastAPI, PostgreSQL, async SQLAlchemy, JWT authentication, automated testing, Docker, and CI/CD.
 
