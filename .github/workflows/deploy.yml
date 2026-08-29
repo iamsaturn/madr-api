@@ -1,0 +1,39 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql+psycopg://user:password@localhost:5432/test_db
+      SECRET_KEY: ci-test-secret-key-that-is-long-enough-123456
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRES: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Lint application
+        run: poetry run poe lint 
+      
+      - name: Run tests
+        run: poetry run poe test
+
+
+
+  
